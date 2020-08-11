@@ -52,7 +52,7 @@ class YOLOTransform(nn.Module):
 
     def postprocess(self, predictions, image_sizes):
         preds = torch.cat(predictions, 1)
-        max_conf, max_ids = torch.max(preds[:, :, 5:], dim=2)
+        _, max_ids = torch.max(preds[:, :, 5:], dim=2)
 
         detections = []
 
@@ -74,10 +74,9 @@ class YOLOTransform(nn.Module):
 
             boxes = resize_boxes(relative_boxes, self.input_size, image_sizes[i])
             labels = max_ids[i, conf_ids].long() + 1
-            scores = max_conf[i, conf_ids]
-            obj_conf = preds[i, conf_ids, 4]
+            scores = preds[i, conf_ids, 4]
 
-            keep = torchvision.ops.nms(boxes, obj_conf, self.nms_thresh)[:self.max_detections]
+            keep = torchvision.ops.nms(boxes, scores, self.nms_thresh)[:self.max_detections]
 
             detection = {
                 "boxes": boxes[keep],

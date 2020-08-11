@@ -17,7 +17,7 @@ class YOLOv3(nn.Module):
     def __init__(self,
             backbone, num_classes,
             input_size=(416, 416),
-            conf_thresh=0.5,
+            conf_thresh=0.05,
             nms_thresh=0.1,
             max_detections=100,
             anchors=[[[116, 90], [156, 198], [373, 326]],
